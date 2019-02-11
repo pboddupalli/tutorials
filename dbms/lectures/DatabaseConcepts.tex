@@ -1,44 +1,200 @@
 \documentclass[12]{beamer}
 
-\usetheme{Singapore}
+\usetheme{Madrid}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
 
-\title{Database Concepts}
-\author{Prasad}
+\title{Transaction Concepts}
 \date
 
 \begin{document}
 
 \maketitle
 
-\begin{frame}
-\frametitle{What is a Transaction}
+\section{Motivation}
 
-A basic unit of consistent and reliable computing (\"Ozsu and Valduriez) \\
+\begin{frame}
+\frametitle{Motivation for Transactions}
+\begin{block}{Reliability}
+Database should continue to operate in spite of failures
+\end{block}
+\begin{block}{Consistency}
+Database should not be in an inconsistent state after failure \end{block}
+\end{frame}
+
+%
+% 2. What is a transaction
+%
+\begin{frame}
+  \frametitle{What is a Transaction}
+  \begin{definition}
+    A basic unit of consistent and reliable computing (\"Ozsu and Valduriez) 
+  \end{definition}
 \vspace{5mm}
 Proved to be the major paradigm for synchronization and recovery (Haerder and Reuter)
-
 \end{frame}
 
-\begin{frame}
-\frametitle{Consistency}
-The notion of consistency can be categorized as:
-\section{•}
-\end{frame}
+
 
 \begin{frame}
 \frametitle{Isolation and Consistency}
-
-The concepts 'Isolation' comes into picture when multiple transactions (from the same user or different users) have to be executed in parallel. \\
+The concepts 'Isolation' comes into picture when multiple transactions (from the same user or different users) have to be executed in parallel.
 \vspace{5mm}
-The techniques that achieve isolation are known as \textit{synchronization} or \textit{Concurrent Control Techniques}. In the absence of consistency guarantees, values in database will be rendered inconsistent, i.e., plain wrong and dangerous.
+The techniques that achieve isolation are known as \textit{synchronization} or \textit{Concurrency Control Techniques}. In the absence of consistency guarantees, values in database will be rendered inconsistent, i.e., plain wrong and dangerous.
 \end{frame}
 
 \begin{frame}
-\
+  \frametitle{Locking}
+  \begin{itemize}
+	\item Automatic Locking
+	\item Granularity
+	\item Multigranularity Locking
+	\item Deadlocks
+	\item Deadlock detection
+	\item Performance
+	\item 
+  \end{itemize}
 \end{frame}
+
+\begin{frame}
+	\frametitle{Locking - Performance Issues}
+  Reduce Lock Contention, by separating writable and readable parts of a record
+\end{frame}
+
+\begin{frame}
+\frametitle{Locking - Preventing HotSpots}
+\begin{itemize}
+\item Delay operations until commit. During the course of 2PL, write locks can be acquired late into the transaction, towards the end of read phase. However, read locks will have to be acquired when the data is first read
+\item Optimistic Concurrency Control methods
+\item partitioning of data, so that different parts of data written to by different transactions are not clubbed together, forcing all transaction to acquire lock on the whole data
+\item Batching - Batching of updates across transactions could be explored, although it has the flip side of more work during error recovery
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Consistency and Isolation Levels}
+Conceptually, there is a mapping (association) between 'degrees of consistency' and 'isolation levels'. For example, the isolation level 'serializability' provides 'strong consistency'. The level of consistency in turn influences the concurrency control protocol used to achieve the level of consistency in question.
+\end{frame}
+
+%
+% Consistency Guarantees
+%
+
+\begin{frame}
+\frametitle{Different consistency guarantees}
+\begin{itemize}
+\item Strong Consistency
+\item sequential consistency
+\item weak consistencies (eventual consistency etc.,)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Different Isolation Levels}
+\begin{itemize}
+\item read-uncommitted (reads dirty, uncommitted data too, no locks held)
+\item read-committed (reads only data committed by an earlier transaction, takes a read lock, but releases it as soon as the data is read)
+\item no-phantom-reads
+\item snapshot isolation (uses multi-versioned data concurrency protocol)
+\item serializable (uses 2-phase locking to achieve the isolation guarantees)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{2-Phase Locking}
+The locking rule that guarantees serializable executions in all cases is called two-phase locking. It says that a transaction must obtain all its locks before releasing any of them. Or equivalently, a transaction cannot obtain new locks once it starts releasing its locks. When a transactions obeys this rule, it has two phases (hence the name): a growing phase during it which it acquires locks, and the shrinking phase during which it releases the locks. The operation that separates the two phases is the transaction's first unlock operation, which is the first operation of the second phase.
+\end{frame}
+
+\begin{frame}
+\frametitle{Isolation Level - Read Uncommitted}
+\begin{itemize}
+\item also known as "Dirty Read" and "Degree 1 Isolation"
+\item reads uncommitted data
+\item increases concurrency (throughput) at the cost of inconsistencies in the read data
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Isolation Level - Read Committed}
+\begin{itemize}
+\item Degree 2 Isolation
+\item ensures that the query only reads data written by committed transactions
+\item achieved by holding the read lock on data items being read. This prevents dirty reads (reading of data written by uncommitted transactions)
+\item does not ensure serializability
+\item under this isolation, a transaction that reads the same data more than once might read different values for each of the read of a data item
+\item in other words, it allows non-repeatable reads (may get different values each time a transaction executes the read)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Isolation Level - Cursor Stability}
+\begin{itemize}
+\item Stronger version of "Read Committed Isolation"
+\item This is applicable during the read (and write) of multiple rows. The read lock is held till the cursor moves to the next row, and not released immediately. Thus the row that the cursor identifies is stable.
+\item Should the transaction decide to write the current row, the read lock can be promoted to write lock, and hence the race condition to update the same row by multiple transactions is obviated (and prevents lost updates)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Multiversioned Data (MVD)}
+\begin{itemize} 
+\item A good technique for ensuring that queries read consistent data without slowing down update queries
+\item It may be recalled that read committed isolation level requires that read locks be held so that only data written by committed transactions is read by the transaction.
+\item With multiversioned data, updates do not overwrite existing copies of data items. Instead, they create a new copy (version) of the data
+\item Hence, each item consists of a sequence of versions, each corresponding to each update that was applied to it
+\item each version is tagged by the id of the transaction that wrote it
+\item all version of a data item are linked in a chain, with each version pointing to the previous version, beginning with the most recent, and going back in time.
+\item The data manager also maintains a list of IDs of committed transactions, called the \textbf{commit list}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{MVD Capabilities - Snapshot Mode}
+\begin{itemize}
+\item allows a query to avoid setting locks and thereby avoid locking delays
+\item when a query (both read-only queries and updaters) executes in this mode, the data manager (DM) associates the current commit list with the query for the duration of the execution.
+\item When the query asks to read a data item, the DM selects the latest version of the data item that is tagged by a transaction ID on the query's commit list. There is no need to lock this data as it can't change. Updaters create new versions and do not overwrite previous versions.
+\item locks will have to be acquired on items being written to (2PL)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Snapshot Isolation (SI) - A popular variation of Snapshot Mode}
+\begin{itemize}
+\item In this variation, an update transaction does not use 2PL. Instead, it executes reads using snapshot mode, and executes writes without setting locks.
+\item When an update transaction T commits, the DM checks that T's updates are still valid, that no other committed transaction had written to the same data item while T is running.
+\item T is aborted if the DM realizes that another T' had written to the same data item and committed. This is called "first committer wins".
+\item Snapshot isolation provides stronger synchronization that read "read committed" isolation. For example, it prevents lost update problem, when two transactions read the same value of a data item and writes one after the other, overwriting the first update
+\item However, SI does not provide serializability
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Two-Phase Commit (2PC)}
+2PC can also be seen as a consensus protocol. Should we commit/abort the distributed transaction ?
+\end{frame}
+
+\begin{frame}
+\frametitle{2PC versus Paxos (Consensus Protocols)}
+2PC blocks if the transaction manager fails, requiring human intervention to restart. 3PC algorithms try to fix 2PC by electing a new transaction manager when the original manager fails.
+\vspace{10pt}
+
+Consensus protocols, including Paxos do not block as long as a majority of processes (managers) are available. Paxos solves the more general problem of consensus, and hence can be used to implement distributed transaction commit as well. However, in comparison to 2PC, Paxos is more chatty and requires more messages. In comparison to most 3PC algorithms, Paxos renders a simpler, more efficient algorithm, in terms of minimal message delay.
+\end{frame}
+
+\section{Error Recovery}
+
+\begin{frame}
+  \frametitle{Undo Log}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Redo Log}
+\end{frame}
+
+
+
 
 \end{document}

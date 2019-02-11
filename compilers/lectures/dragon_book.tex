@@ -1,0 +1,104 @@
+\documentclass[12]{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{rose}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{parskip}
+
+\title{Compilers, Principles, Techniques and Tools}
+\author{Prasad}
+\date
+
+\begin{document}
+
+\maketitle
+
+\setbeamertemplate{footline}[page number]{}
+
+\begin{frame}
+\frametitle{Syntax-directed Definition}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Syntax-Directed Translation}
+
+Syntax-directed translation is a notation to attach rules or program fragments to productions in a grammar. 
+
+\end{frame}
+
+%
+% next frame
+%
+\begin{frame}
+\frametitle{Syntax-Directed Translation ...contd}
+
+\begin{block}{synthesized attributes}
+An attribute is said to be synthesized if its value at a parse-tree node 'N' is determined from attribute values at its children and the node 'N' itself. Can be evaluated during a single bottom-up traversal of a parse tree.
+\end{block}
+
+A parse tree showing the attribute values at each node is called an annotated parse tree
+\end{frame}
+
+%
+% next frame
+%
+\begin{frame}
+\frametitle{Syntax-Directed Translation ...contd}
+\begin{block}{semantic actions}
+Program fragments embedded within (grammar) production bodies
+\end{block}
+
+The implementation of a translation scheme must ensure that semantic actions are performed in the order they would appear during a postorder traversal of a parse tree.
+
+(When drawing a parse tree for a translation scheme, we indicate an action by constructing an extra child for it, connected by a dashed line to the node that corresponds to the head of the production).
+
+\end{frame}
+
+%
+% Frame on Parsing
+%
+\begin{frame}
+\frametitle{Parsing}
+Parsing is the derivation of a syntactic structure for a program (a sentence in the language), fitting the non-terminals (lexemes) into the grammatical model (CFG) of the programming language. In other words, for a stream of words 's' and a grammar G, the parser tries to build a constructive proof that 's' can be derived in 'G'.
+\\~\\
+If the parser determines that the input stream is a valid program, it builds a concrete model (intermediate representation, IR) of the program for use by later phases of compilation. A parse tree is one such IR, and hence is also knows as 'concrete syntax tree'. Parser implementations can be classified as:
+\begin{itemize}
+\item table-driven
+\item direct-coded
+\item hand-coded
+\end{itemize}
+\end{frame}
+
+%
+% Parsing Methods
+%
+\begin{frame}
+\frametitle{Parsing Methods}
+Most parsing methods fall into one of two classes.
+\begin{itemize}
+\item top-down
+\item bottom-up
+\end{itemize}
+These terms refer to the order in which the nodes of a parse tree are constructed.  
+\begin{block}{top-down parsers}
+In top-down parsers construction starts at the root and proceeds towards the leaves. In other words, top-down parsers try to match the input stream against the productions of the grammar by predicting the next production (rule) at each point.
+\end{block}
+\begin{block}{bottom-up parsers}
+In bottom-up parsers, construction starts at the leaves and proceeds towards the root. They work from low-level detail (sequence of words), and accumulate context until the derivation (production) is apparent.
+\end{block}
+\end{frame}
+
+
+%
+% parsing methods continued
+%
+\begin{frame}
+\frametitle{parsing methods ...contd}
+Efficient parsers can be constructed more easily by hand using top-down methods. Bottom-up parsing, however can handle a larger class of grammars and translation schemes, so software tools for generating parsers directly from grammars often use bottom-up methods.
+\end{frame}
+
+\end{document}
