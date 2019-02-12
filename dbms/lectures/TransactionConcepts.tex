@@ -45,6 +45,8 @@ The concepts 'Isolation' comes into picture when multiple transactions (from the
 The techniques that achieve isolation are known as \textit{synchronization} or \textit{Concurrency Control Techniques}. In the absence of consistency guarantees, values in database will be rendered inconsistent, i.e., plain wrong and dangerous.
 \end{frame}
 
+\section{Concurrency Control Protocols}
+
 \begin{frame}
   \frametitle{Locking}
   \begin{itemize}
@@ -57,6 +59,8 @@ The techniques that achieve isolation are known as \textit{synchronization} or \
 	\item 
   \end{itemize}
 \end{frame}
+
+\subsection{Locking Techniques}
 
 \begin{frame}
 	\frametitle{Locking - Performance Issues}
@@ -137,6 +141,8 @@ The locking rule that guarantees serializable executions in all cases is called 
 \end{itemize}
 \end{frame}
 
+\subsection{Multi Version Data (MVD)}
+
 \begin{frame}
 \frametitle{Multiversioned Data (MVD)}
 \begin{itemize} 
@@ -168,6 +174,7 @@ The locking rule that guarantees serializable executions in all cases is called 
 \item T is aborted if the DM realizes that another T' had written to the same data item and committed. This is called "first committer wins".
 \item Snapshot isolation provides stronger synchronization that read "read committed" isolation. For example, it prevents lost update problem, when two transactions read the same value of a data item and writes one after the other, overwriting the first update
 \item However, SI does not provide serializability
+\item In principle, MVD also offers "read commit isolation", as the data read was committed by an earlier transaction
 \end{itemize}
 \end{frame}
 
