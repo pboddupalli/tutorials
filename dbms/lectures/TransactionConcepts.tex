@@ -1,6 +1,6 @@
 \documentclass[12]{beamer}
 
-\usetheme{Madrid}
+\usetheme{CambridgeUS}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -70,13 +70,17 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{2-Phase Locking}
+  \frametitle{Two-Phase Locking (2PL) }
   \begin{itemize}
   \item The locking rule that guarantees serializable executions in all cases
-  \item A transaction must obtain all its locks before releasing any of them. Equivalently, a transaction cannot obtain new locks once it starts releasing its locks
-  \item When a transaction obeys this rule, it has two phases (hence the name): a growing phase during it which it acquires locks, and the shrinking phase during which it releases the locks
+  \item A transaction must obtain all locks before releasing any of them. Equivalently, a transaction cannot obtain new locks once it starts releasing its locks
+  \item Transaction using 2PL have two phases: \textit{growing phase} during which locks are acquired, and \textit{shrinking phase} during which locks are released
   \item The operation that separates the two phases is the transaction's first unlock operation, which is the first operation of the second phase
+  \item Despite the simple intuition, there are no simple proofs of two-phase locking theorem
   \end{itemize}
+   \begin{block}{Two-Phase Locking Theorem}
+     If all transactions in an execution are two-phase locked, then the execution of serializable.
+  \end{block}
 \end{frame}
 
 \begin{frame}
@@ -91,7 +95,15 @@
   \end{itemize}
 \end{frame}
 
-\subsection{Locking Techniques}
+\begin{frame}
+  \frametitle{Granularity}
+  \begin{definition}The size of data items that the TM locks is called \textbf{locking granularity}\end{definition}
+  \begin{itemize}
+    \item \textit{Coarse Granularity-} at the level of files, tables etc.,
+    \item \textit{Fine Granularity -} at the level of records, fields ...
+    \item \textit{Intermediate Granularity -} at the level of pages
+  \end{itemize}
+\end{frame}
 
 \begin{frame}
 	\frametitle{Locking - Performance Issues}
@@ -113,11 +125,11 @@
 Locking comes with a penalty. Locking soon becomes a bottleneck, reducing concurrency and transactions' throughput. This is particular accentuated in 'Query-Update' scenario.
   \begin{block}{Query Workloads}
     \begin{itemize}
-      \item Read-only request for decision support and reporting
+      \item Read-only requests for decision support and reporting
       \item Run much longer than update transactions and access a lot of data
       \item If run using 2PL, they set many locks and hold them for a long time
       \item This leads to starvation of update transactions
-      \item Alternatives: data warehousing, weaker consistency guarantees, Multi versioned data
+      \item Alternatives: \textbf{Data Warehousing, Weaker Consistency Guarantees, Multi Versioned Data (MVD)}
     \end{itemize}
   \end{block}
 \end{frame}
@@ -128,38 +140,29 @@ Conceptually, there is a mapping (association) between 'degrees of consistency' 
 \end{frame}
 
 \begin{frame}
-\frametitle{Different consistency guarantees}
+\frametitle{Different Consistency/Isolation Levels}
 \begin{itemize}
-\item Strong Consistency
-\item sequential consistency
-\item weak consistencies (eventual consistency etc.,)
+\item Read Uncommitted (reads dirty, uncommitted data too, no locks held)
+\item Read Committed (reads only data committed by an earlier transaction, takes a read lock, but releases it as soon as the data is read)
+\item Cursor Stability
+\item No Phantom reads
+\item Snapshot Isolation (SI)
+\item Serializable (uses 2PL to achieve isolation guarantees)
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Different Isolation Levels}
+\frametitle{Read Uncommitted (Degree 1 Isolation)}
 \begin{itemize}
-\item read-uncommitted (reads dirty, uncommitted data too, no locks held)
-\item read-committed (reads only data committed by an earlier transaction, takes a read lock, but releases it as soon as the data is read)
-\item no-phantom-reads
-\item snapshot isolation (uses multi-versioned data concurrency protocol)
-\item serializable (uses 2-phase locking to achieve the isolation guarantees)
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Isolation Level - Read Uncommitted}
-\begin{itemize}
-\item also known as "Dirty Read" and "Degree 1 Isolation"
+\item also known as 'Dirty Read'
 \item reads uncommitted data
 \item increases concurrency (throughput) at the cost of inconsistencies in the read data
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Isolation Level - Read Committed}
+\frametitle{Read Committed (Degree 2 Isolation)}
 \begin{itemize}
-\item Degree 2 Isolation
 \item ensures that the query only reads data written by committed transactions
 \item achieved by holding the read lock on data items being read. This prevents dirty reads (reading of data written by uncommitted transactions)
 \item does not ensure serializability
