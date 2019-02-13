@@ -16,12 +16,13 @@
 \section{Motivation}
 
 \begin{frame}
-\frametitle{Motivation for Transactions}
-\begin{block}{Reliability}
-Database should continue to operate in spite of failures
-\end{block}
-\begin{block}{Consistency}
-Database should not be in an inconsistent state after failure \end{block}
+  \frametitle{Motivation for Transactions}
+  \begin{block}{Reliability}
+    Database should continue to operate in spite of failures
+  \end{block}
+  \begin{block}{Consistency}
+    Database should not be in an inconsistent state after failure
+  \end{block}
 \end{frame}
 
 %
@@ -30,25 +31,56 @@ Database should not be in an inconsistent state after failure \end{block}
 \begin{frame}
   \frametitle{What is a Transaction}
   \begin{definition}
-    A basic unit of consistent and reliable computing (\"Ozsu and Valduriez) 
+    A basic unit of consistent and reliable computing (\"Ozsu and Valduriez)
+    Proved to be the major paradigm for synchronization and recovery (Haerder and Reuter)
   \end{definition}
 \vspace{5mm}
-Proved to be the major paradigm for synchronization and recovery (Haerder and Reuter)
 \end{frame}
 
-
-
+% 3
 \begin{frame}
-\frametitle{Isolation and Consistency}
-The concepts 'Isolation' comes into picture when multiple transactions (from the same user or different users) have to be executed in parallel.
-\vspace{5mm}
-The techniques that achieve isolation are known as \textit{synchronization} or \textit{Concurrency Control Techniques}. In the absence of consistency guarantees, values in database will be rendered inconsistent, i.e., plain wrong and dangerous.
+  \frametitle{Isolation and Consistency}
+  \begin{itemize}
+    \item   The concepts 'Isolation' comes into picture when multiple transactions (from the same user or different users) have to be executed in parallel
+    \item Two operations (transactions) conflict if they operate on the same data and at least one of them is a write
+    \item Techniques that achieve isolation are known as \textit{synchronization} or \textit{Concurrency Control Techniques}
+  \end{itemize}
 \end{frame}
 
 \section{Concurrency Control Protocols}
 
 \begin{frame}
-  \frametitle{Locking}
+  \frametitle{Locking - Most popular mechanism to attain consistency}
+  \begin{itemize}
+    \item Each transaction (operation) reserves access to the data it uses. This reservation is called a \textbf{lock}
+    \item The intuition behind locking is that it avoids interference between conflicting operations by using locks to synchronize the execution order
+    \item There are \textbf{read locks} and \textbf{write (exclusive) locks}
+    \item Before reading a piece of data, a transaction sets a read lock. Before writing the data, it sets a write lock
+    \item Read locks conflict with write locks, and write locks conflict with both read and write locks
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Implications of Locking}
+  \begin{itemize}
+    \item  Locking affects performance. When a transaction sets a lock, it delays other transactions that need to set a conflicting lock.
+    \item the more transactions that are running concurrently, the more likely that such delays will happen
+    \item locking also affects correctness. For example, if 'serializability' is the goal, then simply locking data before accessing it is not enough. Timing of unlocking too matters.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{2-Phase Locking}
+  \begin{itemize}
+  \item The locking rule that guarantees serializable executions in all cases
+  \item A transaction must obtain all its locks before releasing any of them. Equivalently, a transaction cannot obtain new locks once it starts releasing its locks
+  \item When a transaction obeys this rule, it has two phases (hence the name): a growing phase during it which it acquires locks, and the shrinking phase during which it releases the locks
+  \item The operation that separates the two phases is the transaction's first unlock operation, which is the first operation of the second phase
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Aspects of Locking}
   \begin{itemize}
 	\item Automatic Locking
 	\item Granularity
@@ -56,7 +88,6 @@ The techniques that achieve isolation are known as \textit{synchronization} or \
 	\item Deadlocks
 	\item Deadlock detection
 	\item Performance
-	\item 
   \end{itemize}
 \end{frame}
 
@@ -78,13 +109,23 @@ The techniques that achieve isolation are known as \textit{synchronization} or \
 \end{frame}
 
 \begin{frame}
+  \frametitle{Locking - Downside and Alternatives}
+Locking comes with a penalty. Locking soon becomes a bottleneck, reducing concurrency and transactions' throughput. This is particular accentuated in 'Query-Update' scenario.
+  \begin{block}{Query Workloads}
+    \begin{itemize}
+      \item Read-only request for decision support and reporting
+      \item Run much longer than update transactions and access a lot of data
+      \item If run using 2PL, they set many locks and hold them for a long time
+      \item This leads to starvation of update transactions
+      \item Alternatives: data warehousing, weaker consistency guarantees, Multi versioned data
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
 \frametitle{Consistency and Isolation Levels}
 Conceptually, there is a mapping (association) between 'degrees of consistency' and 'isolation levels'. For example, the isolation level 'serializability' provides 'strong consistency'. The level of consistency in turn influences the concurrency control protocol used to achieve the level of consistency in question.
 \end{frame}
-
-%
-% Consistency Guarantees
-%
 
 \begin{frame}
 \frametitle{Different consistency guarantees}
@@ -104,11 +145,6 @@ Conceptually, there is a mapping (association) between 'degrees of consistency' 
 \item snapshot isolation (uses multi-versioned data concurrency protocol)
 \item serializable (uses 2-phase locking to achieve the isolation guarantees)
 \end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{2-Phase Locking}
-The locking rule that guarantees serializable executions in all cases is called two-phase locking. It says that a transaction must obtain all its locks before releasing any of them. Or equivalently, a transaction cannot obtain new locks once it starts releasing its locks. When a transactions obeys this rule, it has two phases (hence the name): a growing phase during it which it acquires locks, and the shrinking phase during which it releases the locks. The operation that separates the two phases is the transaction's first unlock operation, which is the first operation of the second phase.
 \end{frame}
 
 \begin{frame}
@@ -152,16 +188,16 @@ The locking rule that guarantees serializable executions in all cases is called 
 \item Hence, each item consists of a sequence of versions, each corresponding to each update that was applied to it
 \item each version is tagged by the id of the transaction that wrote it
 \item all version of a data item are linked in a chain, with each version pointing to the previous version, beginning with the most recent, and going back in time.
-\item The data manager also maintains a list of IDs of committed transactions, called the \textbf{commit list}
+\item TMs maintain the list of committed transactions, called the \textbf{commit list}
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{MVD Capabilities - Snapshot Mode}
 \begin{itemize}
-\item allows a query to avoid setting locks and thereby avoid locking delays
-\item when a query (both read-only queries and updaters) executes in this mode, the data manager (DM) associates the current commit list with the query for the duration of the execution.
-\item When the query asks to read a data item, the DM selects the latest version of the data item that is tagged by a transaction ID on the query's commit list. There is no need to lock this data as it can't change. Updaters create new versions and do not overwrite previous versions.
+\item allows a query to avoid setting read locks and thereby avoid locking delays
+\item when a query (both read-only queries and updaters) executes in this mode, the TM associates the current commit list with the query for the duration of the execution.
+\item When the query asks to read a data item, the TM selects the latest version of the data item that is tagged by a transaction ID on the query's commit list. There is no need to lock this data as it can't change. Updaters create new versions and do not overwrite previous versions.
 \item locks will have to be acquired on items being written to (2PL)
 \end{itemize}
 \end{frame}
@@ -170,8 +206,8 @@ The locking rule that guarantees serializable executions in all cases is called 
 \frametitle{Snapshot Isolation (SI) - A popular variation of Snapshot Mode}
 \begin{itemize}
 \item In this variation, an update transaction does not use 2PL. Instead, it executes reads using snapshot mode, and executes writes without setting locks.
-\item When an update transaction T commits, the DM checks that T's updates are still valid, that no other committed transaction had written to the same data item while T is running.
-\item T is aborted if the DM realizes that another T' had written to the same data item and committed. This is called "first committer wins".
+\item When an update transaction T commits, the TM checks that T's updates are still valid, that no other committed transaction had written to the same data item while T is running.
+\item T is aborted if the TM realizes that another T' had written to the same data item and committed. This is called "first committer wins".
 \item Snapshot isolation provides stronger synchronization that read "read committed" isolation. For example, it prevents lost update problem, when two transactions read the same value of a data item and writes one after the other, overwriting the first update
 \item However, SI does not provide serializability
 \item In principle, MVD also offers "read commit isolation", as the data read was committed by an earlier transaction
@@ -185,7 +221,7 @@ The locking rule that guarantees serializable executions in all cases is called 
 
 \begin{frame}
 \frametitle{2PC versus Paxos (Consensus Protocols)}
-2PC blocks if the transaction manager fails, requiring human intervention to restart. 3PC algorithms try to fix 2PC by electing a new transaction manager when the original manager fails.
+2PC blocks if the TM fails, requiring human intervention to restart. 3PC algorithms try to fix 2PC by electing a new TM when the original manager fails.
 \vspace{10pt}
 
 Consensus protocols, including Paxos do not block as long as a majority of processes (managers) are available. Paxos solves the more general problem of consensus, and hence can be used to implement distributed transaction commit as well. However, in comparison to 2PC, Paxos is more chatty and requires more messages. In comparison to most 3PC algorithms, Paxos renders a simpler, more efficient algorithm, in terms of minimal message delay.
