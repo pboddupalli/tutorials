@@ -1,5 +1,5 @@
 \documentclass[12]{beamer}
-
+\usefonttheme[onlymath]{serif}
 \usepackage{amsmath}
 \usetheme{CambridgeUS}
 \setbeamertemplate{enumerate items}[default]
@@ -20,9 +20,9 @@
 	\item Involve a two-step model-based approach
 	\begin{enumerate}
 	  	\item First, we make an assumption about the functional form, or shape, of \textbf{\textit{f}}. For example, one very simple assumption is that f is linear in $X$:
-	  	\begin{align*}
+	  	\begin{equation} \label{eq:1}
 	  	  f(x) = \beta_{0} + \beta_{1}X_{1} + \beta_{2}X_{2} + ... + \beta_{p}X_{p}
-	  	\end{align*}
+	  	\end{equation}
 	  	Once it is assumed that f follows a certain shape (linear in the above example), the p+1 coefficients need to be estimated.
 	  	
 	  	\item After a model has been selected, a procedure to train the model using the training data is selected. The most common
@@ -89,13 +89,40 @@ simpler model.
 \end{itemize}
 \end{frame}
 
+%
+% bias-variance tradeoff
+%
+\begin{frame}
+  \frametitle{Bias-Variance Trade-Off}
+  The expected test MSE, for a given value $x_{0}$, can always be decomposed into the sum of three fundamental quantities: the \textit{variance} of $\hat{f}(x_{0})$, the squared \textit{bias} of $\hat{f}(x_{0})$ and the variance of the error terms $\epsilon$.
+\end{frame}
+
 \begin{frame}
   \frametitle{figure test}
-  Hello World
   \begin{figure}[hbt!]
   % \centering
-  \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Untitled.jpg}
+  % \includegraphics[scale=1.5,width=\linewidth,height=\textheight,keepaspectratio]{Untitled.jpg}
+  \includegraphics[scale=2.0,height=0.5\paperwidth,keepaspectratio]{Untitled.jpg}
   \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Classification Setting}
+  \begin{itemize}
+  	\addtolength{\itemsep}{5pt}
+    \item we seek to estimate $f$ on the basis of training observations
+          \{$(x_{1}, y_{1}), . . . , (x_{n}, y_{n})$\}, where now $y_{1}, . . . , y_{n}$ are qualitative
+    \item The most common approach for quantifying the accuracy of our estimate $\hat{f}$ is the
+          training error rate, the proportion of mistakes that are made if we apply error rate our
+          estimate $\hat{f}$ to the training observations:
+          \begin{equation}
+            \color{blue}      
+	  	    \displaystyle \frac{1}{n} \sum_{i=1}^{n} I(y_{i} \neq \hat{y_{i}})
+	  	  \end{equation}
+	  	  Here $\hat{y_{i}}$ is the predicted class label for the \textit{i}th observation using $\hat{f}$. And
+	  	  $I(y_{i} \neq \hat{y_{i}})$ is an indicator variable that equals 1 if $y_{i} \neq \hat{y_{i}}$
+	  	  and zero if $y_{i} = \hat{y_{i}}$.
+  \end{itemize}
 \end{frame}
 
 \end{document}
