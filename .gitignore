@@ -1,1 +1,10 @@
 **/.DS_Store
+**/*.log
+**/*.dvi
+**/*.out
+**/*.nav
+**/*.aux
+**/*.pdf
+**/*.toc
+**/*.snm
+**/*.gz

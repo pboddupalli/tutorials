@@ -1,0 +1,23 @@
+\documentclass[12]{beamer}
+
+\usetheme{CambridgeUS}
+\usepackage{tcolorbox}
+
+%
+% personal definitions of commands
+%
+\newcommand{\LBD}{\boldsymbol{\lambda}}
+
+\begin{document}
+
+\begin{frame}
+  \frametitle{Exponential Distribution (Continuous Process)}
+  \begin{block}{Rate}
+  A continuous process (as opposed to discrete process) whose probability is uniform in time can be completely described by just one number -- the \textbf{average rate of success} which we'll call $\boldsymbol{\lambda}$.
+  \end{block}
+  \vspace{7.5pt}
+  The rate $\LBD$ can be determined by counting the number of successful events during a long time interval, and then dividing it by the duration. For example, if 300 events happen during 100 minutes, then the rate $\LBD$ is 3 events per minute. The observed number will be different in another trial. But in the limit of a very long time interval, one will find essentially the same rate, independent of which specific long interval one uses.
+  \center\tcbox{Expected number of events in time \textit{t} = \textit{$\LBD$t}}
+\end{frame}
+
+\end{document}

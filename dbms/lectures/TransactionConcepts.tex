@@ -6,6 +6,13 @@
 \usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
 
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{bibliography.bib}
+
 \title{Transaction Concepts}
 \date
 
@@ -49,9 +56,12 @@
 
 \section{Concurrency Control Protocols}
 
+\subsection{Locking}
+
 \begin{frame}
   \frametitle{Locking - Most popular mechanism to attain consistency}
   \begin{itemize}
+     \addtolength{\itemsep}{0.5\baselineskip}
     \item Each transaction (operation) reserves access to the data it uses. This reservation is called a \textbf{lock}
     \item The intuition behind locking is that it avoids interference between conflicting operations by using locks to synchronize the execution order
     \item There are \textbf{read locks} and \textbf{write (exclusive) locks}
@@ -72,9 +82,9 @@
 \begin{frame}
   \frametitle{Two-Phase Locking (2PL) }
   \begin{itemize}
-  \item The locking rule that guarantees serializable executions in all cases
+  \item The locking rule that guarantees serializable executions
   \item A transaction must obtain all locks before releasing any of them. Equivalently, a transaction cannot obtain new locks once it starts releasing its locks
-  \item Transaction using 2PL have two phases: \textit{growing phase} during which locks are acquired, and \textit{shrinking phase} during which locks are released
+  \item 2PL has two phases: \textit{growing phase} during which locks are acquired, and \textit{shrinking phase} during which locks are released
   \item The operation that separates the two phases is the transaction's first unlock operation, which is the first operation of the second phase
   \item Despite the simple intuition, there are no simple proofs of two-phase locking theorem
   \end{itemize}
@@ -95,14 +105,56 @@
   \end{itemize}
 \end{frame}
 
+\subsubsection{Granularity}
+
 \begin{frame}
-  \frametitle{Granularity}
+  \frametitle{Locking Aspects - Granularity}
   \begin{definition}The size of data items that the TM locks is called \textbf{locking granularity}\end{definition}
   \begin{itemize}
+   \addtolength{\itemsep}{1.0\baselineskip}
     \item \textit{Coarse Granularity-} at the level of files, tables etc.,
     \item \textit{Fine Granularity -} at the level of records, fields ...
     \item \textit{Intermediate Granularity -} at the level of pages
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Granularity Tradeoff - Concurrency Vs Locking Overhead}
+  \begin{itemize}
+% \addtolength{\itemsep}{0.25\baselineskip}
+    \item At coarse granularity, fewer locks need to be set, minimizing locking overhead. However, coarse granularity typically results in locking of more data than needed, decreasing concurrency and throughput
+    \item At fine granularity, only the required data will be locked. However, it can result in significant locking overhead when locks have to be obtained on a large number of data items
+    \item One compromise is to lock at page granularity, resulting in a moderate degree of concurrency with a moderate amount of overhead.  It also simplifies recovery algorithms for commit and abort, since log and data flush is done in units of pages.
+    \item For high performance TP, record logging is needed as concurrent transactions need to lock different records on the same page.
+  \end{itemize}
+\end{frame}
+
+\subsubsection{Multigranularity}
+
+\begin{frame}
+  \frametitle{Multigranularity Locking}
+  \begin{itemize}
+    \item For better performance, TMs lock data object at different granularities - file-level, page-level, record-level etc., This can lead to conflicts. A lock at the record level can conflict with a lock on the enclosing page. The lock manager has no idea that locks at different granularities might conflict
+    \item The solution is \textbf{\textit{multigranular locking}}
+    \item In this approach, ordinary locks are set at fine grain and \textbf{intention locks} are set at coarse grain
+    \item For eg., a write lock is set on a record and a 'write intention' lock set on the enclosing page
+    \item Each coarse grain intention lock warns other transactions (locking at coarse granularity) about potential conflict with fine grain locks
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Lock Type Compatibility Matrix}
+  \begin{center}
+  \scalebox{1.5}{
+    \begin{tabular}{ c | c  c  c  c  c | }
+      \multicolumn{1}{c}{} & \multicolumn{1}{c}{r} & \multicolumn{1}{c}{w} & \multicolumn{1}{c}{ir} & \multicolumn{1}{c}{iw} & \multicolumn{1}{c}{riw} \\\cline{2-6}
+     r & y & n & y & n & n \\
+    w & n & n & n & n & n \\
+    ir & y & n & y & y & y \\
+    iw & n & n & y & y & n \\
+    riw & n & n & y & n & n \\\cline{2-6}
+    \end{tabular}}
+  \end{center}
 \end{frame}
 
 \begin{frame}
@@ -180,7 +232,7 @@ Conceptually, there is a mapping (association) between 'degrees of consistency' 
 \end{itemize}
 \end{frame}
 
-\subsection{Multi Version Data (MVD)}
+\subsubsection{Multi Version Data (MVD)}
 
 \begin{frame}
 \frametitle{Multiversioned Data (MVD)}
@@ -217,6 +269,8 @@ Conceptually, there is a mapping (association) between 'degrees of consistency' 
 \end{itemize}
 \end{frame}
 
+\subsection{Optimistic Concurrency Control}
+
 \begin{frame}
 \frametitle{Two-Phase Commit (2PC)}
 2PC can also be seen as a consensus protocol. Should we commit/abort the distributed transaction ?
@@ -224,6 +278,7 @@ Conceptually, there is a mapping (association) between 'degrees of consistency' 
 
 \begin{frame}
 \frametitle{2PC versus Paxos (Consensus Protocols)}
+random citation \cite{Bernstein:2009}
 2PC blocks if the TM fails, requiring human intervention to restart. 3PC algorithms try to fix 2PC by electing a new TM when the original manager fails.
 \vspace{10pt}
 
@@ -237,10 +292,8 @@ Consensus protocols, including Paxos do not block as long as a majority of proce
 \end{frame}
 
 \begin{frame}
-  \frametitle{Redo Log}
+  \frametitle{References}
+  \printbibliography
 \end{frame}
-
-
-
 
 \end{document}
