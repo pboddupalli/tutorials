@@ -4,7 +4,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[ngerman]{babel}
+% \usepackage[ngerman]{babel}
 
 \usepackage[
 backend=biber,
@@ -48,9 +48,10 @@ sorting=ynt
 \begin{frame}
   \frametitle{Isolation and Consistency}
   \begin{itemize}
+    \addtolength{\itemsep}{10pt}
     \item   The concepts 'Isolation' comes into picture when multiple transactions (from the same user or different users) have to be executed in parallel
     \item Two operations (transactions) conflict if they operate on the same data and at least one of them is a write
-    \item Techniques that achieve isolation are known as \textit{synchronization} or \textit{Concurrency Control Techniques}
+    \item The process of process of assuring that transactions preserve consistency (and achieve isolation) when executing simultaneously is called \textit{Concurrency Control} or \textit{Synchronization}.
   \end{itemize}
 \end{frame}
 

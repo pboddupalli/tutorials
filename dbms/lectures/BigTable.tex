@@ -1,0 +1,37 @@
+\documentclass[12pt]{beamer}
+\title{BigTable: A Distributed Storage System for Structured Data}
+
+\usetheme{CambridgeUS}
+
+\begin{document}
+\maketitle
+
+\begin{frame}
+  \frametitle{Rows}
+  \begin{itemize}
+    \addtolength{\itemsep}{10pt}
+    \item Row keys in a table are arbitrary strings (upto 64KB in size)
+    \item Every read or write of data under a single row  key is atomic (regardless of the number of columns
+          being read or written to)
+    \item BigTable maintains data in lexicographic order by row key
+    \item The row range for a table is dynamically partitioned
+    \item Each row range is called a {\color{red}{tablet}}, which is the unit of distribution and load balancing
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Column Families}
+  \begin{itemize}
+    \addtolength{\itemsep}{5pt}
+    \item Column keys grouped into sets are called {\color{red}{column families}}
+    \item Column families are the basic unit of access control
+    \item All data stored in a column family is usually of the same type (facilitates compression of data in
+    	  the same column family)
+	\item Fewer column families (in hundreds), but unbounded number of columns in each family
+	\item A column key is named using the syntax {\color{red}{family:qualifier}}. Family names must be printable,
+		  but qualifiers may be arbitrary strings
+    \item Access control and both disk and memory accounting are performed at the column-family level
+  \end{itemize}
+\end{frame}
+
+\end{document}
