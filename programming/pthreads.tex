@@ -1,0 +1,86 @@
+\documentclass{beamer}
+% \usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{listings}
+
+\title{Pthreads Tutorial}
+
+\usetheme{CambridgeUS}
+
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+\textsf{}
+\maketitle	
+  
+  \begin{frame}
+  	\frametitle{Synchronization}
+  	\begin{itemize}
+      \addtolength{\itemsep}{15pt}
+      \item Invariants are assumptions made by a program, especially assumptions about
+            relationships between sets of variables. E.g., When money is transferred between
+            two bank accounts, the sum of the accounts must be the same before and after the
+            transfer.
+      \item Critical sections are areas of code that affect a shared state.
+      \item A critical section can almost always be translated into a data invariant, and vice
+            versa. When you remove an element from a queue, for example, you can see the code
+            performing the removal as a critical section, or you can see the state of the queue
+            as an invariant.
+  	\end{itemize}
+  \end{frame}
+
+  % Frame 2
+  
+  \begin{frame}
+    \frametitle{Synchronization}
+    \begin{itemize}
+      \addtolength{\itemsep}{15pt}
+      \item Most invariants break momentarily. The trick is to restore the invariant other parts
+            of the code encounters them. That is a large part of what "synchronization" is all
+            about.
+      \item Synchronization protects your program from the fleeting inconsistency. If your code
+            locks a mutex whenever it must (temporarily) break an invariant, then other threads
+            that rely on the invariant, and which also lock the mutex, will be delayed until the
+            mutex is unlocked -- when the invariant has been restored.
+      \item "Predicates" are logical expressions that describe the state of invariants needed by
+            your code.
+    \end{itemize}
+  \end{frame}
+  
+  \begin{frame}
+    \frametitle{Intrinsic Loking in Java - The Synchronized Block}
+    \begin{itemize}
+      \addtolength{\itemsep}{5pt}
+      \item Every Java object can implicitly act as a lock for purposes of synchronization
+      \item These built-in locks are called \textit{\textbf{intrinsic locks}} or
+            \textbf{\emph{monitor locks}}.
+      \item The lock is automatically acquired by the executing thread before entering a
+            synchronized block and automatically released when control exits the synchronized block,
+            whether by the normal control path or by throwing an exception out of the block.
+      \item The only way to acquire an intrinsic lock is to enter a synchronized block or method
+            guarded by that lock.
+      \item Intrinsic locks in Java act as mutexes (or mutual exclusion locks), which means that
+            at most one thread may own the lock
+    \end{itemize}
+  \end{frame}
+    
+  \begin{frame}[fragile]
+    \frametitle{Reentrancy}
+    \begin{itemize}
+      \item Reentrancy means that locks are acquired on a per-thread rather than per-invocation basis
+      \item If a thread tries to acquire a lock that it already holds, the request succeeds
+      \item Java's intrinsic locks are reentrant
+      \item By default, pthreads (POSIX threads) mutexes are granted on a per-invocation basis, and
+            hence are not reentrant. pthreads provide a reentrant variety as follows:
+    \end{itemize}
+    \begin{verbatim}
+      pthread_mutex_t mutex;
+      pthread_mutexattr_t mutex_attr;
+
+      pthread_mutexattr_init(&mutex_attr);
+      pthread_mutexattr_settype(&mutex_attr,
+                                PTHREAD_MUTEX_RECURSIVE);
+      pthread_mutex_init(&mutex, &mutex_attr);
+    \end{verbatim}
+  \end{frame}
+\end{document}
