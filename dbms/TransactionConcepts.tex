@@ -51,7 +51,7 @@ sorting=ynt
     \addtolength{\itemsep}{10pt}
     \item   The concepts 'Isolation' comes into picture when multiple transactions (from the same user or different users) have to be executed in parallel
     \item Two operations (transactions) conflict if they operate on the same data and at least one of them is a write
-    \item The process of process of assuring that transactions preserve consistency (and achieve isolation) when executing simultaneously is called \textit{Concurrency Control} or \textit{Synchronization}.
+    \item The process of assuring that transactions preserve consistency (and achieve isolation) when executing simultaneously is called \textit{Concurrency Control} or \textit{Synchronization}.
   \end{itemize}
 \end{frame}
 
@@ -60,7 +60,7 @@ sorting=ynt
 \subsection{Locking}
 
 \begin{frame}
-  \frametitle{Locking - Most popular mechanism to attain consistency}
+  \frametitle{Locking - Most popular mechanism for Concurrency Control}
   \begin{itemize}
      \addtolength{\itemsep}{0.5\baselineskip}
     \item Each transaction (operation) reserves access to the data it uses. This reservation is called a \textbf{lock}

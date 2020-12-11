@@ -8,3 +8,7 @@
 **/*.toc
 **/*.snm
 **/*.gz
+**/*.bbl
+**/*.blg
+**/*.bcf
+**/*.run.xml
