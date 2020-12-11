@@ -1,0 +1,39 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usetheme{CambridgeUS}
+\usecolortheme{beaver}
+
+\begin{document}
+	\author{Prasad Boddupalli}
+	\title{Inter Process Communication}
+	%\subtitle{}
+	%\logo{}
+	%\institute{}
+	%\date{}
+	%\subject{}
+	%\setbeamercovered{transparent}
+	%\setbeamertemplate{navigation symbols}{}
+	\begin{frame}[plain]
+		\maketitle
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Interaction Styles}
+		\begin{table}[center]
+			\resizebox{\textwidth}{!} {
+			\renewcommand{\arraystretch}{2} {
+			\begin{tabular}[t]{c | c | c}
+				 & one-to-one & one-to-many \\
+				 \hline
+				 Synchronous & Request/response & -- \\
+				 \hline
+				 Asynchronous & 
+				 	\begin{tabular}{c}Asynchronous request/response \\ One-way notifications\end{tabular} &
+				 	\begin{tabular}{c}Publish/subscribe \\ Publish/async responses\end{tabular}
+			\end{tabular}}}
+		\end{table}
+	\end{frame}
+\end{document}
